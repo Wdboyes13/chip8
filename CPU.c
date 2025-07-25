@@ -88,30 +88,30 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 uint8_t y = (inst & 0x00F0) >> 4;
-                if (subinst == '0'){
+                if (subinst == '0'){ // 8XY0 - Set VX to value of VY
                     memcpy(&state->V[x], &state->V[y], sizeof(state->V[y]));
-                } else if (subinst == '1'){
+                } else if (subinst == '1'){ // 8XY1 - Set VX to Binary OR of VX and VY
                     uint8_t ord = state->V[x] | state->V[y];
                     memcpy(&state->V[x], &ord, sizeof(ord));
-                } else if (subinst == '2'){
+                } else if (subinst == '2'){ // 8XY2 - Set VX to Binary AND of VX and VY
                     uint8_t andd = state->V[x] & state->V[y];
                     memcpy(&state->V[x], &andd, sizeof(andd));
-                } else if (subinst == '3'){
+                } else if (subinst == '3'){ // 8XY3 - Set VX to Logical XOR of VX and VY 
                     uint8_t xord = state->V[x] ^ state->V[y];
                     memcpy(&state->V[x], &xord, sizeof(xord));
-                } else if (subinst == '4'){
+                } else if (subinst == '4'){ // 8XY4 - Set VX to value of VX + value of VY 
                     uint8_t addd = state->V[x] + state->V[y];
                     memcpy(&state->V[x], &addd, sizeof(addd));
-                } else if (subinst == '5'){
+                } else if (subinst == '5'){ // 8XY5 - Set VX to value of VX - value of VY 
                     uint8_t subd = state->V[x] - state->V[y];
                     memcpy(&state->V[x], &subd, sizeof(subd));
-                } else if (subinst == '7'){
+                } else if (subinst == '7'){ // 8XY7 - Set VX to value of VY - value of VX 
                     uint8_t subd = state->V[y] - state->V[x];
                     memcpy(&state->V[x], &subd, sizeof(subd));      
-                } else if (subinst == '6'){
+                } else if (subinst == '6'){ // 8XY6 - Put value of VY into VX and bitshift 1 to the right
                     memcpy(&state->V[x], &state->V[y], sizeof(state->V[y]));
                     state->V[x] = state->V[x] >> 1;
-                } else if (subinst == 'E'){
+                } else if (subinst == 'E'){ // 8XYE - Put value of VY into VX and bitshift 1 to the left
                     memcpy(&state->V[x], &state->V[y], sizeof(state->V[y]));
                     state->V[x] = state->V[x] << 1;
                 }
