@@ -17,7 +17,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
 
         if (sscanf(line, "%4s", CurrInst) == 1) {
             // Now CurrInst contains the opcode as a 16-bit integer
-            printf("Fetched instruction: 0x%s\n", CurrInst);
+            dprint("Fetched instruction: 0x%s\n", CurrInst);
             if (strcmp(CurrInst, "00E0") == 0){
                 ClearDisplay(state);
             } else if (CurrInst[0] == '1'){
@@ -47,7 +47,17 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 sscanf(&CurrInst[1], "%1X", &x);
                 uint16_t fontdex = state->V[x];
                 state->I = 0x300 + fontdex * 5;
-                printf("FX29 on V[%d] = %d, I = 0x%X\n", x, fontdex, state->I);
+                dprint("FX29 on V[%d] = %d, I = 0x%X\n", x, fontdex, state->I);
+
+            } else if (strcmp(CurrInst, "00EE") == 0){
+                if (state->Stack[0]){
+                    memcpy(&state->PC, &state->Stack[state->SP], sizeof(state->PC));
+                    state->SP--;
+                }
+            } else if (CurrInst[0] == '2'){
+                memcpy(&state->Stack[state->SP++], &state->PC, sizeof(state->PC));
+                const char* sub = CurrInst + 1;
+                state->PC = (uint16_t)strtol(sub, NULL, 16);
             }
         }
 

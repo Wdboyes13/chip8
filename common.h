@@ -35,3 +35,9 @@ extern FontSet ASCII;
 void DoDisplay(EmuState* emstate, CHIP_State* state);
 void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]);
 void InitFontSet(CHIP_State* state);
+
+#ifdef DBG
+  #define dprint(...) printf(__VA_ARGS__)
+#else
+  #define dprint(...) ((void)0)
+#endif

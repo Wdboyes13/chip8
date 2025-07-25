@@ -1,0 +1,11 @@
+Supported Instructions
+
+1NNN - Set PC to NNN 
+00E0 - Clear Screen
+6XNN - Set VX to NN 
+7XNN - Add NN to VX 
+ANNN - Set I to NNN 
+DXYN - Draw N Pixels talle sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY
+FX29 - Set I to address of Char Index in VX 
+00EE - Return to and pop Stack[SP]
+2NNN - Push PC to Stack[SP] and Set PC to NNN 
