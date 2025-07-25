@@ -1,11 +1,28 @@
 Supported Instructions
 
-1NNN - Set PC to NNN 
-00E0 - Clear Screen
 6XNN - Set VX to NN 
 7XNN - Add NN to VX 
 ANNN - Set I to NNN 
-DXYN - Draw N Pixels talle sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY
+
+00E0 - Clear Screen
+DXYN - Draw N Pixels tall sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY
 FX29 - Set I to address of Char Index in VX 
+
+1NNN - Set PC to NNN 
 00EE - Return to and pop Stack[SP]
 2NNN - Push PC to Stack[SP] and Set PC to NNN 
+
+3XNN - Increment PC if VX == NN 
+4XNN - Increment PC if VX != NN 
+5XY0 - Increment PC if VX == VY 
+9XY0 - Increment PC if VX != VY
+
+8XY0 - Set VX to value of VY
+8XY1 - Set VX to Binary OR of VX and VY 
+8XY2 - Set VX to Binary AND of VX and VY 
+8XY3 - Set VX to Logical XOR of VX and VY 
+8XY4 - Set VX to value of VX + value of VY 
+8XY5 - Set VX to value of VX - value of VY 
+8XY7 - Set VX to value of VY - value of VX 
+8XY6 - Put value of VY into VX and bitshift 1 to the right 
+8XYE - Put value of VY into VX and bitshift 1 to the left
