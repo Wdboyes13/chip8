@@ -49,7 +49,7 @@
 | tm.sd VX      | FX15   | Set Delay timer to value in VX |
 | tm.ss VX      | FX18   | Set Sound timer to value in VX |
 | gkey VX       | FX0A   | Blocking Get Key, store key pressed in VX |
-| del VX        | DXF0   | Delay for value in VX seconds |
+| del VX        | DXF0   | Delay for value in VX seconds (Custom Instruction) |
 
 ALL numbers are hex
 
