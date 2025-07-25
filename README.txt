@@ -6,4 +6,4 @@ you'll need libomp (OpenMP) and libSDL2
 it will not work on windows unless you somehow get unistd.h to work 
 
 supported instructions are in Supported.txt 
-the loaded binary is in test.c and instructions are CRLD ("\r\n") separated
+the loaded binary is in test.c and instructions are CRLF ("\r\n") separated
