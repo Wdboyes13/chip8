@@ -17,9 +17,24 @@
 | ipc.ine VX, 0xNN | 4XNN  | Increment PC x2 if VX != NN |
 | ipc.e VX, VY  | 5XY0   | Increment PC x2 if VX == VY |
 | ipc.ne VX, VY | 9XY0   | Increment PC x2 if VX != VY |
-
 | pusha         | FX55   | Push All Registers to RAM at value of I |
 | popa          | FX65   | Pop All Registers to RAM from value of I |
+| tm.gd VX      | FX07   | Set VX to value of Delay Timer |
+| tm.sd VX      | FX15   | Set Delay timer to value in VX |
+| tm.ss VX      | FX18   | Set Sound timer to value in VX |
+| idxadd VX     | FX1E   | Add value of VX to I |
+| gkey VX       | FX0A   | Blocking Get Key, store key pressed in VX |
+| bcd VX        | FX33   | Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I |
+| del VX        | DXF0   | Delay for value in VX seconds |
+| mov VX, VY    | 8XY0   | Set VX to value of VY |
+| r.or VX, VY   | 8XY1   | Set VX to Binary OR of VX and VY |
+| r.and VX, VY  | 8XY2   | Set VX to Binary AND of VX and VY |
+| r.xor VX, VY  | 8XY3   | Set VX to Logical XOR of VX and VY |
+| r.add VX, VY  | 8XY4   | Set VX to value of VX + value of VY |
+| r.lsub VX, VY | 8XY5   | Set VX to value of VX - value of VY |
+| r.rsub VX, VY | 8XY7   | Set VX to value of VY - value of VX |
+| r.bsr VX, VY  | 8XY6   | Put value of VY into VX and bitshift 1 to the right |
+| r.bsl VX, VY  | 8XYE   | Put value of VY into VX and bitshift 1 to the left |
 
 ALl numbers are hex
 
