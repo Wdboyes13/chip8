@@ -48,7 +48,6 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint16_t fontdex = state->V[x];
                 state->I = 0x300 + fontdex * 5;
                 dprint("FX29 on V[%d] = %d, I = 0x%X\n", x, fontdex, state->I);
-
             } else if (strcmp(CurrInst, "00EE") == 0){ // 00EE - Return to and pop Stack[SP]
                 if (state->Stack[0] > 0){
                     memcpy(&state->PC, &state->Stack[--state->SP], sizeof(state->PC));
@@ -125,11 +124,61 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t rando = rand();
                 uint8_t randod = rando & nn;
                 memcpy(&state->V[x], &randod, sizeof(randod));
+            } else if (CurrInst[0] == 'E' && CurrInst[2] == '9' && CurrInst[3] == 'E'){
+                uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
+                uint8_t x = (inst & 0x0F00) >> 8;
+
+                if (emstate->keypad[state->V[x]]) state->PC++;
+                continue;
+            } else if (CurrInst[0] == 'E' && CurrInst[2] == 'A' && CurrInst[3] == '1'){
+                uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
+                uint8_t x = (inst & 0x0F00) >> 8;
+
+                if (!emstate->keypad[state->V[x]]) state->PC++;
+                continue;
+            } else if (CurrInst[0] == 'F'){
+                uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
+                uint8_t x = (inst & 0x0F00) >> 8;
+                char sub0 = CurrInst[2];
+                char sub1 = CurrInst[3];
+
+                if (sub0 == '0' && sub1 == '7'){
+                    memcpy(&state->V[x], &state->DelayTimer, sizeof(state->DelayTimer));
+                } else if (sub0 == '1' && sub1 == '5'){
+                    memcpy(&state->DelayTimer, &state->V[x], sizeof(state->V[x]));
+                } else if (sub0 == '1' && sub1 == '8'){
+                    memcpy(&state->SoundTimer, &state->V[x], sizeof(state->V[x]));
+                } else if (sub0 == '1' && sub1 == 'E'){
+                    state->I += state->V[x];
+                } else if (sub0 == '0' && sub1 == 'A'){
+                    while (!emstate->IsKeyPressed){
+                        if (state->DelayTimer > 0) state->DelayTimer--;
+                        if (state->SoundTimer > 0) state->SoundTimer--;
+                        usleep(16667);
+                    }
+                    memcpy(&state->V[x], &emstate->keypressed, sizeof(emstate->keypressed));
+                } else if (sub0 == '3' && sub1 == '3'){
+                    uint8_t val = state->V[x];
+                    state->RAM[state->I + USR_RAM_OFFSET] = val / 100;
+                    state->RAM[(state->I + USR_RAM_OFFSET) + 1] = (val / 10) % 10;
+                    state->RAM[(state->I + USR_RAM_OFFSET) + 2] = val % 10;
+                } else if (sub0 == '5' && sub1 == '5'){
+                    PushAllRegs(state, emstate);
+                } else if (sub0 == '6' && sub1 == '5'){
+                    PopAllRegs(state, emstate);
+                }
             }
         }
 
         line = strtok(NULL, "\r\n");
         state->PC++;
-        usleep(200000);
+        if (state->DelayTimer > 0) state->DelayTimer--;
+        if (state->SoundTimer > 0) {
+            SDL_PauseAudioDevice(dev, 0); // Unpause if paused
+            SDL_ClearQueuedAudio(dev);    // Prevent stuttering
+            SDL_QueueAudio(dev, tone, sizeof(tone));
+            state->SoundTimer--;
+        }
+        usleep(16667);
     }
 }

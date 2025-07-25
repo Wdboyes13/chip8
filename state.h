@@ -3,8 +3,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define KEYNPRESSED -1
+#define NUMKEYS 16
+#define USR_RAM_OFFSET (0x300 + 200)
+
 typedef struct CHIP_State {
-    uint8_t RAM[4096];     // Memory: CHIP-8 has direct access to up to 4 kilobytes of RAM
+    uint8_t RAM[4096 + (200 + 0x300)];     // Memory: CHIP-8 has direct access to up to 4 kilobytes of RAM
     uint16_t PC;           // A program counter, often called just “PC”, which points at the current instruction in memory
     uint16_t SP;
     uint16_t I;            // One 16-bit index register called “I” which is used to point at locations in memory
@@ -21,5 +25,7 @@ typedef struct EmuState {
     bool InitializedDisplay;
     int CursorX;
     int CursorY;
+    volatile bool keypad[NUMKEYS];
+    bool IsKeyPressed;
+    uint8_t keypressed;
 } EmuState;
-
