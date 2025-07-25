@@ -115,6 +115,16 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                     memcpy(&state->V[x], &state->V[y], sizeof(state->V[y]));
                     state->V[x] = state->V[x] << 1;
                 }
+            } else if (CurrInst[0] == 'B'){ // BNNN - Set PC to V0 + NNN
+                const char* sub = CurrInst + 1;
+                state->PC = ((uint16_t)strtol(sub, NULL, 16)) + state->V[0];
+            } else if (CurrInst[0] == 'C'){ // CXNN - Get random number, Binary AND it with NN and store that in VX
+                uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
+                uint8_t x = (inst & 0x0F00) >> 8;
+                int nn = inst & 0x00FF;
+                uint8_t rando = rand();
+                uint8_t randod = rando & nn;
+                memcpy(&state->V[x], &randod, sizeof(randod));
             }
         }
 

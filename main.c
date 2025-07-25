@@ -21,6 +21,7 @@ int main(){
     emstate->AllocatedState = true;
     emstate->CursorX = 0;
     emstate->CursorY = 0;
+    srand(time(NULL));
     InitFontSet(state);
     for(int y = 0; y < EMU_HEIGHT; y++){
         for(int x = 0; x < EMU_WIDTH; x++){
