@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "Input.h"
 
 void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
     int execlen = 1;
@@ -13,6 +14,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
     }
     char* line = strtok(exec, "\r\n");
     while (line != NULL) {
+        WPollInputEvents(emstate);
         bool jamp = false;
         char CurrInst[5];
 
@@ -38,6 +40,11 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
             } else if (CurrInst[0] == 'A'){ // ANNN - Set I to NNN 
                 const char* sub = CurrInst + 1;
                 state->I = (uint16_t)strtol(sub, NULL, 16);
+            } else if (CurrInst[0] == 'D' && CurrInst[2] == 'F' && CurrInst[3] == '0'){
+                uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
+                uint8_t x = (inst & 0x0F00) >> 8;
+                dprint("Pausing for %x secconds\n", state->V[x]);
+                sleep(state->V[x]);
             } else if (CurrInst[0] == 'D'){ // DXYN - Draw N Pixels tall sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
@@ -49,6 +56,8 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 sscanf(&CurrInst[1], "%1X", &x);
                 uint16_t fontdex = state->V[x];
                 state->I = 0x300 + fontdex * 5;
+
+                DumpState(state);
                 dprint("FX29 on V[%d] = %d, I = 0x%X\n", x, fontdex, state->I);
             } else if (strcmp(CurrInst, "00EE") == 0){ // 00EE - Return to and pop Stack[SP]
                 if (state->Stack[0] > 0){
@@ -67,7 +76,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t x = (inst & 0x0F00) >> 8;
                 int nn = inst & 0x00FF;
                 if (state->V[x] == nn) {
-                    state->PC++;
+                    state->PC += 2;
                     jamp = true;
                     continue;
                 }
@@ -76,7 +85,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t x = (inst & 0x0F00) >> 8;
                 int nn = inst & 0x00FF;
                 if (state->V[x] != nn) {
-                    state->PC++;
+                    state->PC += 2;
                     jamp = true;
                     continue;
                 }
@@ -85,7 +94,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t x = (inst & 0x0F00) >> 8;
                 uint8_t y = (inst & 0x00F0) >> 4;
                 if (state->V[x] == state->V[y]) {
-                    state->PC++;
+                    state->PC += 2;
                     jamp = true;
                     continue;
                 }
@@ -94,7 +103,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t x = (inst & 0x0F00) >> 8;
                 uint8_t y = (inst & 0x00F0) >> 4;
                 if (state->V[x] != state->V[y]) {
-                    state->PC++;
+                    state->PC += 2;
                     jamp = true;
                     continue;
                 }
@@ -134,6 +143,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 const char* sub = CurrInst + 1;
                 state->PC = ((uint16_t)strtol(sub, NULL, 16)) + state->V[0];
                 jamp = true;
+                continue;
             } else if (CurrInst[0] == 'C'){ // CXNN - Get random number, Binary AND it with NN and store that in VX
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
@@ -146,16 +156,16 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t x = (inst & 0x0F00) >> 8;
 
                 if (emstate->keypad[state->V[x]]) {
-                    state->PC++;
-                    continue;
+                    state->PC += 2;
                     jamp = true;
+                    continue;
                 }
             } else if (CurrInst[0] == 'E' && CurrInst[2] == 'A' && CurrInst[3] == '1'){ // EXA1 - Increment PC if key in VX is not pressed
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
 
                 if (!emstate->keypad[state->V[x]]) {
-                    state->PC++;
+                    state->PC += 2;
                     jamp = true;
                     continue;
                 }
@@ -174,12 +184,21 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 } else if (sub0 == '1' && sub1 == 'E'){ // FX1E - Add value of VX to I
                     state->I += state->V[x];
                 } else if (sub0 == '0' && sub1 == 'A'){ // FX0A - Blocking Get Key, store key pressed in VX
+                    dprint("Waiting for key\n");
                     while (!emstate->IsKeyPressed){
                         if (state->DelayTimer > 0) state->DelayTimer--;
-                        if (state->SoundTimer > 0) state->SoundTimer--;
+                        if (state->SoundTimer > 0) {
+                            SDL_PauseAudioDevice(dev, 0); // Unpause if paused
+                            SDL_ClearQueuedAudio(dev);    // Prevent stuttering
+                            SDL_QueueAudio(dev, tone, sizeof(tone));
+                            state->SoundTimer--;
+                        }
                         usleep(16667);
+                        WPollInputEvents(emstate);
+                        printf("Polling for key... Current: %d\n", atomic_load(&emstate->IsKeyPressed));
                     }
                     memcpy(&state->V[x], &emstate->keypressed, sizeof(emstate->keypressed));
+                    dprint("Got Key %x\n", state->V[x]);
                 } else if (sub0 == '3' && sub1 == '3'){ // FX33 - Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I
                     uint8_t val = state->V[x];
                     state->RAM[state->I + USR_RAM_OFFSET] = val / 100;

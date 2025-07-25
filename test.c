@@ -1,7 +1,7 @@
 
 #define CLPC(HEX_LET_DEX) "00E0\r\n61" HEX_LET_DEX "\r\nF129\r\nD555\r\n"
 
-char exec[] =
+char alphexec[] =
 // A-Z
 CLPC("00") // A
 CLPC("01") // B
@@ -41,4 +41,18 @@ CLPC("21") // 6
 CLPC("22") // 7
 CLPC("23") // 8
 CLPC("24") // 9
+;
+
+char exec[] = 
+"F10A\r\n" // Get key - Store in V1
+"6602\r\n" // Set V6 to 0x02
+"D6F0\r\n"
+"F20A\r\n" // Get key - Store in V2
+"8124\r\n" // Put V1 + V2 in V1
+"631A\r\n" // Set V3 to 26
+"8314\r\n" // Put V3 + V1 in V3
+"00E0\r\n" // Clear Screen
+"F329\r\n" // Set I to address if char index stored in V3
+"6500\r\n" // Set V5 to 0x00
+"D555\r\n" // Print that
 ;

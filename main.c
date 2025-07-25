@@ -5,13 +5,16 @@
 #include <SDL2/SDL.h>
 #include <omp.h>
 #include "test.c"
-#include "Input.h"
 
 SDL_AudioDeviceID dev;
 float tone[44100 / 60];
 
 int main(){
 
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) {
+        printf("SDL_Init failed: %s\n", SDL_GetError());
+        exit(1);
+    }
     SDL_AudioSpec want = {
         .freq = 44100,
         .format = AUDIO_F32SYS,
@@ -60,10 +63,6 @@ int main(){
         #pragma omp section
         {
             DoDisplay(emstate, state);
-        }
-        #pragma omp section
-        {
-            InputThread(emstate);
         }
         #pragma omp section
         {

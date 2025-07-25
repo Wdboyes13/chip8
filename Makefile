@@ -9,7 +9,7 @@ LDFRAMEWORKS := -framework Cocoa -framework IOKit \
 
 LDFLAGS := -L/opt/will/lib -lomp -L/opt/will/lib/other-static -L/opt/will/lib/SDL -lSDL2 -lraylib $(LDFRAMEWORKS)
 CFLAGS := -O2
-CPPFLAGS := -I/opt/will/include -fopenmp
+CPPFLAGS := -I/opt/will/include -fopenmp -DDBG
 
 $(OUT): $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)

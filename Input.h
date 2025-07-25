@@ -2,4 +2,4 @@
 
 #include "state.h"
 
-void InputThread(EmuState* emstate);
+void WPollInputEvents(EmuState* emstate);

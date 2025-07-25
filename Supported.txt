@@ -14,10 +14,10 @@ FX29 - Set I to address of Char Index in VX
 2NNN - Push PC to Stack[SP] and Set PC to NNN 
 BNNN - Set PC to V0 + NNN
 
-3XNN - Increment PC if VX == NN 
-4XNN - Increment PC if VX != NN 
-5XY0 - Increment PC if VX == VY 
-9XY0 - Increment PC if VX != VY
+3XNN - Increment PC x2 if VX == NN 
+4XNN - Increment PC x2 if VX != NN 
+5XY0 - Increment PC x2 if VX == VY 
+9XY0 - Increment PC x2 if VX != VY
 
 8XY0 - Set VX to value of VY
 8XY1 - Set VX to Binary OR of VX and VY 
@@ -29,8 +29,8 @@ BNNN - Set PC to V0 + NNN
 8XY6 - Put value of VY into VX and bitshift 1 to the right 
 8XYE - Put value of VY into VX and bitshift 1 to the left
 
-EX9E - Increment PC if key in VX is pressed
-EXA1 - Increment PC if key in VX is not pressed
+EX9E - Increment PC x2 if key in VX is pressed
+EXA1 - Increment PC x2 if key in VX is not pressed
 
 FX07 - Set VX to value of Delay Timer
 FX15 - Set Delay timer to value in VX
@@ -40,3 +40,7 @@ FX0A - Blocking Get Key, store key pressed in VX
 FX33 - Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I
 FX55 - Push All Registers to RAM at value of I
 FX65 - Pop All Registers to RAM from value of I
+
+
+CUSTOM
+DXF0 - Delay for value in VX seconds

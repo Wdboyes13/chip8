@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdatomic.h>
+#include <stdio.h>
 
 #define KEYNPRESSED -1
 #define NUMKEYS 16
@@ -23,9 +25,28 @@ typedef struct CHIP_State {
 typedef struct EmuState {
     bool AllocatedState;
     bool InitializedDisplay;
-    int CursorX;
-    int CursorY;
-    volatile bool keypad[NUMKEYS];
-    bool IsKeyPressed;
-    uint8_t keypressed;
+    volatile int CursorX;
+    volatile int CursorY;
+    atomic_bool keypad[NUMKEYS];
+    atomic_bool IsKeyPressed;
+    atomic_uint_fast8_t keypressed;
 } EmuState;
+
+
+#ifdef DBG
+  #define dprint(...) printf(__VA_ARGS__)
+#else
+  #define dprint(...) ((void)0)
+#endif
+
+static void DumpState(CHIP_State* state){
+    dprint("PC: %x\n", state->PC);
+    dprint("SP: %x\n", state->SP);
+    dprint("I: %x\n", state->I);
+    for (int i = 0; i < 16; i++){
+        dprint("Stack[%d]: %x\n", i, state->Stack[i]);
+        dprint("V[%d]: %x\n", i, state->V[i]);
+    }
+    dprint("DelayTimer: %x\n", state->DelayTimer);
+    dprint("SoundTimer: %x\n", state->SoundTimer);
+}
