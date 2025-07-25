@@ -1,5 +1,4 @@
 #include "common.h"
-#include <unistd.h>
 #include "Display.h"
 #include <string.h>
 #include <stdio.h>
@@ -10,7 +9,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
     int execlen = 1;
     state->PC = 0;
     while (!emstate->InitializedDisplay) {
-        usleep(200000);
+        NSLP(200000);
     }
     char* line = strtok(exec, "\r\n");
     while (line != NULL) {
@@ -44,7 +43,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 dprint("Pausing for %x secconds\n", state->V[x]);
-                sleep(state->V[x]);
+                SSLP(state->V[x]);
             } else if (CurrInst[0] == 'D'){ // DXYN - Draw N Pixels tall sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
@@ -193,7 +192,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                             SDL_QueueAudio(dev, tone, sizeof(tone));
                             state->SoundTimer--;
                         }
-                        usleep(16667);
+                        NSLP(16667);
                         WPollInputEvents(emstate);
                         printf("Polling for key... Current: %d\n", atomic_load(&emstate->IsKeyPressed));
                     }
@@ -221,6 +220,6 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
             SDL_QueueAudio(dev, tone, sizeof(tone));
             state->SoundTimer--;
         }
-        usleep(16667);
+        NSLP(16667);
     }
 }

@@ -48,3 +48,13 @@ extern float tone[44100 / 60];
 
 void PopAllRegs(CHIP_State* state, EmuState* emstate);
 void PushAllRegs(CHIP_State* state, EmuState* emstate);
+
+#ifdef _WIN32 
+#include <windows.h>
+#define NSLP(microsecs) Sleep( microsecs / 1000 )
+#define SSLP(secs) Sleep( secs * 1000 )
+#else 
+#include <unistd.h>
+#define NSLP(microsecs) usleep(microsecs)
+#define SSLP(secs) sleep(secs)
+#endif
