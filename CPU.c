@@ -13,6 +13,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
     }
     char* line = strtok(exec, "\r\n");
     while (line != NULL) {
+        bool jamp = false;
         char CurrInst[5];
 
         if (sscanf(line, "%4s", CurrInst) == 1) {
@@ -22,6 +23,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
             } else if (CurrInst[0] == '1'){ // 1NNN - Set PC to NNN
                 const char* sub = CurrInst + 1;
                 state->PC = (uint16_t)strtol(sub, NULL, 16);
+                jamp = true;
                 continue;
             } else if (CurrInst[0] == '6'){ // 6XNN - Set VX to NN
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
@@ -51,37 +53,51 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
             } else if (strcmp(CurrInst, "00EE") == 0){ // 00EE - Return to and pop Stack[SP]
                 if (state->Stack[0] > 0){
                     memcpy(&state->PC, &state->Stack[--state->SP], sizeof(state->PC));
+                    jamp = true;
                     continue;
                 }
             } else if (CurrInst[0] == '2'){ // 2NNN - Push PC to Stack[SP] and Set PC to NNN 
                 memcpy(&state->Stack[state->SP++], &state->PC, sizeof(state->PC));
                 const char* sub = CurrInst + 1;
                 state->PC = (uint16_t)strtol(sub, NULL, 16);
+                jamp = true;
                 continue;
             } else if (CurrInst[0] == '3'){ // 3XNN - Increment PC if VX == NN 
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 int nn = inst & 0x00FF;
-                if (state->V[x] == nn) state->PC++;
-                continue;
+                if (state->V[x] == nn) {
+                    state->PC++;
+                    jamp = true;
+                    continue;
+                }
             } else if (CurrInst[0] == '4'){ // 4XNN - Increment PC if VX != NN 
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 int nn = inst & 0x00FF;
-                if (state->V[x] != nn) state->PC++;
-                continue;
+                if (state->V[x] != nn) {
+                    state->PC++;
+                    jamp = true;
+                    continue;
+                }
             } else if (CurrInst[0] == '5' && CurrInst[3] == '0'){ // 5XY0 - Increment PC if VX == VY 
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 uint8_t y = (inst & 0x00F0) >> 4;
-                if (state->V[x] == state->V[y]) state->PC++;
-                continue;
+                if (state->V[x] == state->V[y]) {
+                    state->PC++;
+                    jamp = true;
+                    continue;
+                }
             } else if (CurrInst[0] == '9' && CurrInst[3] == '0'){ // 9XY0 - Increment PC if VX != VY
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
                 uint8_t y = (inst & 0x00F0) >> 4;
-                if (state->V[x] != state->V[y]) state->PC++;
-                continue;
+                if (state->V[x] != state->V[y]) {
+                    state->PC++;
+                    jamp = true;
+                    continue;
+                }
             } else if (CurrInst[0] == '8'){
                 char subinst = CurrInst[3];
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
@@ -117,6 +133,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
             } else if (CurrInst[0] == 'B'){ // BNNN - Set PC to V0 + NNN
                 const char* sub = CurrInst + 1;
                 state->PC = ((uint16_t)strtol(sub, NULL, 16)) + state->V[0];
+                jamp = true;
             } else if (CurrInst[0] == 'C'){ // CXNN - Get random number, Binary AND it with NN and store that in VX
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
@@ -128,14 +145,20 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
 
-                if (emstate->keypad[state->V[x]]) state->PC++;
-                continue;
+                if (emstate->keypad[state->V[x]]) {
+                    state->PC++;
+                    continue;
+                    jamp = true;
+                }
             } else if (CurrInst[0] == 'E' && CurrInst[2] == 'A' && CurrInst[3] == '1'){
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
 
-                if (!emstate->keypad[state->V[x]]) state->PC++;
-                continue;
+                if (!emstate->keypad[state->V[x]]) {
+                    state->PC++;
+                    jamp = true;
+                    continue;
+                }
             } else if (CurrInst[0] == 'F'){
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
@@ -171,7 +194,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
         }
 
         line = strtok(NULL, "\r\n");
-        state->PC++;
+        if (!jamp) state->PC++;
         if (state->DelayTimer > 0) state->DelayTimer--;
         if (state->SoundTimer > 0) {
             SDL_PauseAudioDevice(dev, 0); // Unpause if paused
