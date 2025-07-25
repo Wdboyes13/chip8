@@ -19,7 +19,8 @@
 | bcd VX        | FX33   | Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I |
 | del VX        | DXF0   | Delay for value in VX seconds |
 ## Flow Control
-|---------------|--------|---------------|
+| ASM Instruction | Binary | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
 | jmp 0xNNN     | 1NNN   | Set PC to NNN |
 | ret           | 00EE   | Return to and pop Stack[SP] |
 | call 0xNNN    | 2NNN   | Push PC to Stack[SP] and Set PC to NNN |
@@ -29,7 +30,8 @@
 | ipc.e VX, VY  | 5XY0   | Increment PC x2 if VX == VY |
 | ipc.ne VX, VY | 9XY0   | Increment PC x2 if VX != VY |
 ## Math
-|---------------|--------|-----------------------|
+| ASM Instruction | Binary | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
 | mov VX, VY    | 8XY0   | Set VX to value of VY |
 | r.or VX, VY   | 8XY1   | Set VX to Binary OR of VX and VY |
 | r.and VX, VY  | 8XY2   | Set VX to Binary AND of VX and VY |
