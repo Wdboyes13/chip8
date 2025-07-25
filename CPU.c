@@ -141,7 +141,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 uint8_t rando = rand();
                 uint8_t randod = rando & nn;
                 memcpy(&state->V[x], &randod, sizeof(randod));
-            } else if (CurrInst[0] == 'E' && CurrInst[2] == '9' && CurrInst[3] == 'E'){
+            } else if (CurrInst[0] == 'E' && CurrInst[2] == '9' && CurrInst[3] == 'E'){ // EX9E - Increment PC if key in VX is pressed
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
 
@@ -150,7 +150,7 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                     continue;
                     jamp = true;
                 }
-            } else if (CurrInst[0] == 'E' && CurrInst[2] == 'A' && CurrInst[3] == '1'){
+            } else if (CurrInst[0] == 'E' && CurrInst[2] == 'A' && CurrInst[3] == '1'){ // EXA1 - Increment PC if key in VX is not pressed
                 uint16_t inst = (uint16_t)strtol(CurrInst, NULL, 16);
                 uint8_t x = (inst & 0x0F00) >> 8;
 
@@ -165,29 +165,29 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                 char sub0 = CurrInst[2];
                 char sub1 = CurrInst[3];
 
-                if (sub0 == '0' && sub1 == '7'){
+                if (sub0 == '0' && sub1 == '7'){ // FX07 - Set VX to value of Delay Timer
                     memcpy(&state->V[x], &state->DelayTimer, sizeof(state->DelayTimer));
-                } else if (sub0 == '1' && sub1 == '5'){
+                } else if (sub0 == '1' && sub1 == '5'){ // FX15 - Set Delay timer to value in VX
                     memcpy(&state->DelayTimer, &state->V[x], sizeof(state->V[x]));
-                } else if (sub0 == '1' && sub1 == '8'){
+                } else if (sub0 == '1' && sub1 == '8'){ // FX18 - Set Sound timer to value in VX
                     memcpy(&state->SoundTimer, &state->V[x], sizeof(state->V[x]));
-                } else if (sub0 == '1' && sub1 == 'E'){
+                } else if (sub0 == '1' && sub1 == 'E'){ // FX1E - Add value of VX to I
                     state->I += state->V[x];
-                } else if (sub0 == '0' && sub1 == 'A'){
+                } else if (sub0 == '0' && sub1 == 'A'){ // FX0A - Blocking Get Key, store key pressed in VX
                     while (!emstate->IsKeyPressed){
                         if (state->DelayTimer > 0) state->DelayTimer--;
                         if (state->SoundTimer > 0) state->SoundTimer--;
                         usleep(16667);
                     }
                     memcpy(&state->V[x], &emstate->keypressed, sizeof(emstate->keypressed));
-                } else if (sub0 == '3' && sub1 == '3'){
+                } else if (sub0 == '3' && sub1 == '3'){ // FX33 - Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I
                     uint8_t val = state->V[x];
                     state->RAM[state->I + USR_RAM_OFFSET] = val / 100;
                     state->RAM[(state->I + USR_RAM_OFFSET) + 1] = (val / 10) % 10;
                     state->RAM[(state->I + USR_RAM_OFFSET) + 2] = val % 10;
-                } else if (sub0 == '5' && sub1 == '5'){
+                } else if (sub0 == '5' && sub1 == '5'){ // FX55 - Push All Registers to RAM at value of I
                     PushAllRegs(state, emstate);
-                } else if (sub0 == '6' && sub1 == '5'){
+                } else if (sub0 == '6' && sub1 == '5'){ // FX65 - Pop All Registers to RAM from value of I
                     PopAllRegs(state, emstate);
                 }
             }

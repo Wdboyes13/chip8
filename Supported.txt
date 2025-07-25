@@ -28,3 +28,15 @@ BNNN - Set PC to V0 + NNN
 8XY7 - Set VX to value of VY - value of VX 
 8XY6 - Put value of VY into VX and bitshift 1 to the right 
 8XYE - Put value of VY into VX and bitshift 1 to the left
+
+EX9E - Increment PC if key in VX is pressed
+EXA1 - Increment PC if key in VX is not pressed
+
+FX07 - Set VX to value of Delay Timer
+FX15 - Set Delay timer to value in VX
+FX18 - Set Sound timer to value in VX
+FX1E - Add value of VX to I
+FX0A - Blocking Get Key, store key pressed in VX
+FX33 - Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I
+FX55 - Push All Registers to RAM at value of I
+FX65 - Pop All Registers to RAM from value of I
