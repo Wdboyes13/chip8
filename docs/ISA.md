@@ -1,6 +1,6 @@
 # Wills CHIP-8 ISA
 
-| ASM Prototype | Binary | Description                                                           |
+| ASM Instruction | Binary | Description                                                           |
 |---------------|--------|-----------------------------------------------------------------------|
 | imov VX, 0xNN | 6XNN   | Set VX to NN |
 | iadd VX, 0xNN | 7XNN   | Add NN to VX |
