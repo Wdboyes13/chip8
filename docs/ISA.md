@@ -36,7 +36,7 @@
 | r.bsr VX, VY  | 8XY6   | Put value of VY into VX and bitshift 1 to the right |
 | r.bsl VX, VY  | 8XYE   | Put value of VY into VX and bitshift 1 to the left |
 
-ALl numbers are hex
+ALL numbers are hex
 
 
 
