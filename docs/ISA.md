@@ -1,23 +1,23 @@
 # Wills CHIP-8 ISA
 
+## Drawing
 | ASM Instruction | Binary | Description                                                           |
 |---------------|--------|-----------------------------------------------------------------------|
-| imov VX, 0xNN | 6XNN   | Set VX to NN |
-| iadd VX, 0xNN | 7XNN   | Add NN to VX |
-| setidx 0xNNN  | ANNN   | Set I to NNN |
 | cls           | 00E0   | Clear Screen |
 | drw VX, VY, 0xN | DXYN   | Draw N Pixels tall, sprite from I at Horizontal X coord in VX, and Vertical Y coord at VY |
 | ichar VX      | FX29   | Set I to address of Char Index in VX |
-| rand VX, 0xNN | CXNN   | Get random number, Binary AND it with NN and store that in VX |
+
+## Memory
+| ASM Instruction | Binary | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
+| idxadd VX     | FX1E   | Add value of VX to I |
+| bcd VX        | FX33   | Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I |
 | pusha         | FX55   | Push All Registers to RAM at value of I |
 | popa          | FX65   | Pop All Registers to RAM from value of I |
-| tm.gd VX      | FX07   | Set VX to value of Delay Timer |
-| tm.sd VX      | FX15   | Set Delay timer to value in VX |
-| tm.ss VX      | FX18   | Set Sound timer to value in VX |
-| idxadd VX     | FX1E   | Add value of VX to I |
-| gkey VX       | FX0A   | Blocking Get Key, store key pressed in VX |
-| bcd VX        | FX33   | Take number in VX, convert it to 3 Decimal Digits, and store it in RAM at Address in I |
-| del VX        | DXF0   | Delay for value in VX seconds |
+| imov VX, 0xNN | 6XNN   | Set VX to NN |
+| iadd VX, 0xNN | 7XNN   | Add NN to VX |
+| setidx 0xNNN  | ANNN   | Set I to NNN |
+
 ## Flow Control
 | ASM Instruction | Binary | Description                                                           |
 |---------------|--------|-----------------------------------------------------------------------|
@@ -41,6 +41,15 @@
 | r.rsub VX, VY | 8XY7   | Set VX to value of VY - value of VX |
 | r.bsr VX, VY  | 8XY6   | Put value of VY into VX and bitshift 1 to the right |
 | r.bsl VX, VY  | 8XYE   | Put value of VY into VX and bitshift 1 to the left |
+## Other
+| ASM Instruction | Binary | Description                                                           |
+|---------------|--------|-----------------------------------------------------------------------|
+| rand VX, 0xNN | CXNN   | Get random number, Binary AND it with NN and store that in VX |
+| tm.gd VX      | FX07   | Set VX to value of Delay Timer |
+| tm.sd VX      | FX15   | Set Delay timer to value in VX |
+| tm.ss VX      | FX18   | Set Sound timer to value in VX |
+| gkey VX       | FX0A   | Blocking Get Key, store key pressed in VX |
+| del VX        | DXF0   | Delay for value in VX seconds |
 
 ALL numbers are hex
 
