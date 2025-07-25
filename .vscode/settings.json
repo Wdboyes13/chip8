@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.dbclient-js": "javascript",
+        "*.s": "arm",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "state.h": "c",
+        "stdbool.h": "c",
+        "unistd.h": "c"
+    }
+}
