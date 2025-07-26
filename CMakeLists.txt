@@ -14,6 +14,7 @@ add_executable( chip8
     src/CPU.c src/Display.c
     src/InputHandler.c src/main.c
     src/Poppers.c src/FontArrays/Font.c
+    src/ExecLoader.c
 )
 
 target_compile_options( chip8 PRIVATE -fopenmp -O2 )

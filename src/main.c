@@ -9,7 +9,13 @@
 SDL_AudioDeviceID dev;
 float tone[44100 / 60];
 
-int main(){
+char* LdExec(const char* fname);
+
+int main(int argc, char* argv[]){
+    if (argc < 2){
+        printf("Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
 
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) {
         printf("SDL_Init failed: %s\n", SDL_GetError());
@@ -46,6 +52,7 @@ int main(){
         return 1;
     }
     emstate->AllocatedState = true;
+    printf("Set States\n");
 
     emstate->CursorX = 0;
     emstate->CursorY = 0;
@@ -58,6 +65,8 @@ int main(){
         }
     }
 
+    printf("Enterring Parallel\n");
+
     #pragma omp parallel sections
     {
         #pragma omp section
@@ -66,7 +75,8 @@ int main(){
         }
         #pragma omp section
         {
-            RunCPU(state, emstate, exec);
+            printf("Starting CPU\n");
+            RunCPU(state, emstate, LdExec(argv[1]));
         }
     }
 
