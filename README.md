@@ -29,7 +29,6 @@ and Licensed under __The ZLib license__
 More info on the license, can be found at [LICENSE.RAYLIB](/LICENSE.RAYLIB)  
   
 __Main Application__  
-__FULL LICENSE AT [LICENSE](/LICENSE)__  
 Wdboyes13's CHIP-8 Emulator, is licensed under the GNU General Public License v3.  
 See https://weelam.ca/license/ (Or [License](/LICENSE))for license information.  
 SPDX-License-Identifier: GPL-3.0-or-later  
