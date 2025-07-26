@@ -20,6 +20,7 @@ const char* RdLine(FILE* file) {
         return strdup(line);
     } else {
         printf("Failed to read a line\n");
+        return NULL;
     }
 }
 
