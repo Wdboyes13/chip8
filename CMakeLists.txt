@@ -18,8 +18,13 @@ add_executable( chip8
 )
 
 target_compile_options( chip8 PRIVATE -fopenmp -O2 )
-target_link_options( chip8 PRIVATE -lomp )
-target_link_libraries( chip8 PRIVATE SDL2::SDL2 raylib )
+
+if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    message(STATUS "Clang detected, linking OpenMP manually")
+    target_link_options( chip8 PRIVATE -lomp )
+endif()
+
+target_link_libraries( chip8 PRIVATE raylib )
 
 if(APPLE)
     target_link_libraries(chip8

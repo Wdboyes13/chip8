@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include "state.h"
-#include <SDL2/SDL.h>
+#include <raylib.h>
 
 #define PIX_SCALE 10
 
@@ -43,8 +43,7 @@ void InitFontSet(CHIP_State* state);
   #define dprint(...) ((void)0)
 #endif
 
-extern SDL_AudioDeviceID dev;
-extern float tone[44100 / 60];
+extern Sound tone;
 
 void PopAllRegs(CHIP_State* state, EmuState* emstate);
 void PushAllRegs(CHIP_State* state, EmuState* emstate);

@@ -186,10 +186,8 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
                     dprint("Waiting for key\n");
                     while (!emstate->IsKeyPressed){
                         if (state->DelayTimer > 0) state->DelayTimer--;
-                        if (state->SoundTimer > 0) {
-                            SDL_PauseAudioDevice(dev, 0); // Unpause if paused
-                            SDL_ClearQueuedAudio(dev);    // Prevent stuttering
-                            SDL_QueueAudio(dev, tone, sizeof(tone));
+                        if (state->SoundTimer > 0 && !IsSoundPlaying(tone)) {
+                            PlaySound(tone);
                             state->SoundTimer--;
                         }
                         NSLP(16667);
@@ -214,10 +212,8 @@ void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
         line = strtok(NULL, "\r\n");
         if (!jamp) state->PC++;
         if (state->DelayTimer > 0) state->DelayTimer--;
-        if (state->SoundTimer > 0) {
-            SDL_PauseAudioDevice(dev, 0); // Unpause if paused
-            SDL_ClearQueuedAudio(dev);    // Prevent stuttering
-            SDL_QueueAudio(dev, tone, sizeof(tone));
+        if (state->SoundTimer > 0 && !IsSoundPlaying(tone)) {
+            PlaySound(tone);
             state->SoundTimer--;
         }
         NSLP(16667);

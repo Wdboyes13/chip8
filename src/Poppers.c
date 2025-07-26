@@ -1,5 +1,5 @@
 #include "common.h"
-
+#include <string.h> // Because some idiot thought putting `memcpy` in string.h was smart
 #define IStart() uint16_t IStart = (state->I + USR_RAM_OFFSET)
 
 #define PushReg(IDX) memcpy(&state->RAM[ IStart + IDX ], &state->V[ IDX ], sizeof(state->V[ IDX ]))

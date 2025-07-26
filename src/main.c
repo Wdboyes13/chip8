@@ -2,14 +2,41 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL2/SDL.h>
+#include <raylib.h>
+#include <math.h>
 #include <omp.h>
 #include "test.c"
-
-SDL_AudioDeviceID dev;
-float tone[44100 / 60];
+#include <time.h>
 
 char* LdExec(const char* fname);
+
+#define SAMPLE_RATE 44100
+#define TONE_DURATION_SECONDS 1.0f
+#define FREQUENCY 440.0f
+
+Sound tone;
+
+void GenerateTone(float freq) {
+    int sampleCount = (int)(SAMPLE_RATE * TONE_DURATION_SECONDS);
+    float *samples = (float *)malloc(sampleCount * sizeof(float));
+
+    for (int i = 0; i < sampleCount; i++) {
+        samples[i] = 0.25f * sinf(2.0f * PI * freq * i / SAMPLE_RATE);
+    }
+
+    Wave wave = {
+        .frameCount = sampleCount,
+        .sampleRate = SAMPLE_RATE,
+        .sampleSize = 32,
+        .channels = 1,
+        .data = samples
+    };
+
+    tone = LoadSoundFromWave(wave);
+
+    // Clean up wave (copies sample data into tone)
+    UnloadWave(wave);
+}
 
 int main(int argc, char* argv[]){
     if (argc < 2){
@@ -17,28 +44,8 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-    SDL_AudioSpec want = {
-        .freq = 44100,
-        .format = AUDIO_F32SYS,
-        .channels = 1,
-        .samples = 512,
-        .callback = NULL, // Using queue audio instead
-    };
-
-    SDL_AudioDeviceID dev = SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0);
-    if (dev == 0) {
-        fprintf(stderr, "Failed to open audio: %s\n", SDL_GetError());
-    }
-
-    float freq = 440.0f; // A4 tone
-
-    for (int i = 0; i < sizeof(tone) / sizeof(float); ++i) {
-        tone[i] = 0.25f * sinf(2.0f * M_PI * freq * i / 44100.0f);
-    }
+    InitAudioDevice();
+    GenerateTone(FREQUENCY);
 
     EmuState* emstate = malloc(sizeof(EmuState));
     if (emstate == NULL) {
@@ -82,6 +89,8 @@ int main(int argc, char* argv[]){
 
     if (state) free(state);
     if (emstate) free(emstate);
+    UnloadSound(tone);
+    CloseAudioDevice();
 
     return 0;
 }

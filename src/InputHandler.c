@@ -4,7 +4,6 @@
 
 void WPollInputEvents(EmuState* emstate) {
 
-    // Key mappings: Raylib doesn't use SDL_Keycode, so use KEY_*
     for (int i = 0; i < 16; i++) {
         emstate->keypad[i] = false; // Reset all keys
     }
