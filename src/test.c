@@ -1,4 +1,11 @@
-
+//===------- test.c - Old tests, no longer used - C ----------------------*-===//
+//
+// Copyright (C) 2025 Wdboyes13
+// Part of Wdboyes13's CHIP-8 Emulator, under the GNU General Public License v3.
+// See https://weelam.ca/license/ for license information.
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+//===----------------------------------------------------------------------===//
 #define CLPC(HEX_LET_DEX) "00E0\r\n61" HEX_LET_DEX "\r\nF129\r\nD555\r\n"
 
 char alphexec[] =

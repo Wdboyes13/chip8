@@ -7,6 +7,17 @@
         "state.h": "c",
         "stdbool.h": "c",
         "unistd.h": "c",
-        "tokenize.h": "c"
+        "tokenize.h": "c",
+        "common.h": "c",
+        "array": "c",
+        "deque": "c",
+        "map": "c",
+        "span": "c",
+        "string": "c",
+        "string_view": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "flat_map": "c",
+        "stacktrace": "c"
     }
 }

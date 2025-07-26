@@ -1,3 +1,11 @@
+//===------- common.h - Common Header providing many things - C Header -*-===//
+//
+// Copyright (C) 2025 Wdboyes13
+// Part of Wdboyes13's CHIP-8 Emulator, under the GNU General Public License v3.
+// See https://weelam.ca/license/ for license information.
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+//===----------------------------------------------------------------------===//
 #pragma once
 
 #include <stdbool.h>
@@ -47,6 +55,8 @@ extern Sound tone;
 
 void PopAllRegs(CHIP_State* state, EmuState* emstate);
 void PushAllRegs(CHIP_State* state, EmuState* emstate);
+
+void WPollInputEvents(EmuState* emstate);
 
 #ifdef _WIN32 
 #include <windows.h>

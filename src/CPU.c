@@ -1,9 +1,16 @@
+//===------- CPU.c - Main CPU Loop - C ----------------------------------*-===//
+//
+// Copyright (C) 2025 Wdboyes13
+// Part of Wdboyes13's CHIP-8 Emulator, under the GNU General Public License v3.
+// See https://weelam.ca/license/ for license information.
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+//===----------------------------------------------------------------------===//
 #include "common.h"
 #include "Display.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Input.h"
 
 void RunCPU(CHIP_State* state, EmuState* emstate, char exec[]){
     int execlen = 1;
