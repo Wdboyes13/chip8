@@ -1,5 +1,6 @@
-# A simple CHIP-8 emulator
-# I used this guide! https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
+# A simple CHIP-8 emulator  
+### I used this guide!  
+### https://tobiasvl.github.io/blog/write-a-chip-8-emulator/
 
 ## Requirements
 - Raylib (Included in [vendor/raylib](/vendor/raylib/))  
