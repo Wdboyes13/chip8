@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project (
     chip8
-    LANGUAGES C 
+    LANGUAGES C CXX
     HOMEPAGE_URL https://github.com/Wdboyes13/chip8
     VERSION 1.2.0
 )
@@ -25,6 +25,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 endif()
 
 target_link_libraries( chip8 PRIVATE raylib )
+target_compile_definitions(chip8 PRIVATE "DBG")
 
 if(APPLE)
     target_link_libraries(chip8
@@ -39,7 +40,12 @@ if(APPLE)
 endif()
 
 add_executable( chip8-as
-    src/ASMParse/LoadFile.c src/ASMParse/Main.c
-    src/ASMParse/Tokenize.c
+        src/ASMParse/Main.cpp
+        src/ASMParse/Tokenize.cpp
 )
 
+install(
+        TARGETS
+        chip8-as
+        chip8
+)

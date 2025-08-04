@@ -1,5 +1,13 @@
+imov V0, 0x00
+ipc.ie V0, 0x00
+jmp 0x09
 cls
 imov V1, 0x16
 ichar V1 
-imov V2, 05
+imov V2, 0x05
 drw V2, V2, 5
+cls 
+imov V1, 0x10
+ichar V1
+imov V2, 0x05
+drw V2, V2, 0x05

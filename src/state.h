@@ -15,7 +15,8 @@
 
 #define KEYNPRESSED -1
 #define NUMKEYS 16
-#define USR_RAM_OFFSET (0x300 + 200)
+#define USR_RAM_OFFSET (0x300 + 200 + 2048)
+#define EXEC_OFFSET (0x300 + 201)
 
 typedef struct CHIP_State {
     uint8_t RAM[4096 + (200 + 0x300)];     // Memory: CHIP-8 has direct access to up to 4 kilobytes of RAM
